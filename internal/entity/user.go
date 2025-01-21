@@ -5,43 +5,43 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type user struct {
-	id       entity.ID
-	name     string
-	email    string
-	password string
+type User struct {
+	ID       entity.ID
+	Name     string
+	Email    string
+	Password string
 }
 
-func NewUser(name, email, password string) (*user, error) {
+func NewUser(name, email, password string) (*User, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
-	return &user{
-		id:       entity.NewID(),
-		name:     name,
-		email:    email,
-		password: string(hash),
+	return &User{
+		ID:       entity.NewID(),
+		Name:     name,
+		Email:    email,
+		Password: string(hash),
 	}, nil
 }
 
-func (u *user) GetID() entity.ID {
-	return u.id
+func (u *User) GetID() entity.ID {
+	return u.ID
 }
 
-func (u *user) GetName() string {
-	return u.name
+func (u *User) GetName() string {
+	return u.Name
 }
 
-func (u *user) GetEmail() string {
-	return u.email
+func (u *User) GetEmail() string {
+	return u.Email
 }
 
-func (u *user) GetPassword() string {
-	return u.password
+func (u *User) GetPassword() string {
+	return u.Password
 }
 
-func (u *user) IsValidPassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(u.password), []byte(password))
+func (u *User) IsValidPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
 }
