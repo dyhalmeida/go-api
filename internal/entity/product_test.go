@@ -38,10 +38,10 @@ func TestProduct_ShouldBeValidProduct(t *testing.T) {
 }
 
 func TestProduct_ShoulCallValidateSuccessfully(t *testing.T) {
-	product := &product{
-		id:    entity.NewID(),
-		name:  "Product",
-		price: 10.0,
+	product := &Product{
+		ID:    entity.NewID(),
+		Name:  "Product",
+		Price: 10.0,
 	}
 	assert.Nil(t, product.Validate())
 }
