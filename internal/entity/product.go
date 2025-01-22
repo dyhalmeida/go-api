@@ -15,19 +15,19 @@ var (
 	ErrPriceInvalid  = errors.New("price is invalid")
 )
 
-type product struct {
-	id        entity.ID
-	name      string
-	price     float64
-	createdAt time.Time
+type Product struct {
+	ID        entity.ID
+	Name      string
+	Price     float64
+	CreatedAt time.Time
 }
 
-func NewProduct(name string, price float64) (*product, error) {
-	product := &product{
-		id:        entity.NewID(),
-		name:      name,
-		price:     price,
-		createdAt: time.Now(),
+func NewProduct(name string, price float64) (*Product, error) {
+	product := &Product{
+		ID:        entity.NewID(),
+		Name:      name,
+		Price:     price,
+		CreatedAt: time.Now(),
 	}
 
 	if err := product.Validate(); err != nil {
@@ -38,41 +38,41 @@ func NewProduct(name string, price float64) (*product, error) {
 
 }
 
-func (p *product) GetID() entity.ID {
-	return p.id
+func (p *Product) GetID() entity.ID {
+	return p.ID
 }
 
-func (p *product) GetName() string {
-	return p.name
+func (p *Product) GetName() string {
+	return p.Name
 }
 
-func (p *product) GetPrice() float64 {
-	return p.price
+func (p *Product) GetPrice() float64 {
+	return p.Price
 }
 
-func (p *product) GetCreatedAt() time.Time {
-	return p.createdAt
+func (p *Product) GetCreatedAt() time.Time {
+	return p.CreatedAt
 }
 
-func (p *product) Validate() error {
+func (p *Product) Validate() error {
 
-	if p.id.String() == "" {
+	if p.ID.String() == "" {
 		return ErrIdRequired
 	}
 
-	if _, err := entity.ParseID(p.id.String()); err != nil {
+	if _, err := entity.ParseID(p.ID.String()); err != nil {
 		return ErrIdInvalid
 	}
 
-	if p.name == "" {
+	if p.Name == "" {
 		return ErrNameRequired
 	}
 
-	if p.price == 0 {
+	if p.Price == 0 {
 		return ErrPriceRequired
 	}
 
-	if p.price < 0 {
+	if p.Price < 0 {
 		return ErrPriceInvalid
 	}
 
