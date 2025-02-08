@@ -2,7 +2,7 @@ POST http://localhost:3333/products HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Product 3",
+    "name": "Product 6",
     "price": 420
 }
 
@@ -20,3 +20,6 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3333/products/63be681b-7b52-40fe-a533-5cf585e88fae HTTP/1.1
+
+###
+GET http://localhost:3333/products?page=1&limit=3&sort=asc HTTP/1.1
