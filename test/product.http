@@ -17,3 +17,6 @@ Content-Type: application/json
     "name": "Product 1 Updated",
     "price": 240
 }
+
+###
+DELETE http://localhost:3333/products/63be681b-7b52-40fe-a533-5cf585e88fae HTTP/1.1

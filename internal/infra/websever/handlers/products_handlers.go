@@ -100,3 +100,33 @@ func (h *ProductHandler) UpdateProduct(res http.ResponseWriter, req *http.Reques
 
 	res.WriteHeader(http.StatusOK)
 }
+
+func (h *ProductHandler) DeleteProduct(res http.ResponseWriter, req *http.Request) {
+
+	id := chi.URLParam(req, "id")
+	if id == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err := entityPkg.ParseID(id)
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err = h.ProductDB.FindByID(id)
+	if err != nil {
+		res.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	err = h.ProductDB.Delete(id)
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	res.WriteHeader(http.StatusOK)
+
+}
