@@ -38,7 +38,7 @@ func init() {
 	workDir, _ := os.Getwd()
 	viper.SetConfigName("app_config")
 	viper.SetConfigType("env")
-	viper.SetConfigFile(workDir + "/cmd/.env")
+	viper.SetConfigFile(workDir + "/.env")
 	viper.AutomaticEnv()
 
 	err := viper.ReadInConfig()
