@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/dyhalmeida/go-apis/configs"
@@ -34,6 +35,8 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	// r.Use(LogRequest)
+
 	r.Route("/products", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetTokenAuth()))
 		r.Use(jwtauth.Authenticator)
@@ -48,4 +51,12 @@ func main() {
 	r.Post("/users/token", userHandler.GetJwtToken)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", config.GetServerPort()), r)
+}
+
+// Exemplo de custom middleware
+func LogRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		log.Printf("request: %s %s", req.Method, req.URL.Path)
+		next.ServeHTTP(res, req)
+	})
 }
