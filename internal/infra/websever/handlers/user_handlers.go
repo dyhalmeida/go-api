@@ -3,19 +3,25 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/dyhalmeida/go-apis/internal/dto"
 	"github.com/dyhalmeida/go-apis/internal/entity"
 	"github.com/dyhalmeida/go-apis/internal/infra/database"
+	"github.com/go-chi/jwtauth"
 )
 
 type UserHandler struct {
-	UserDB database.UserDbInterface
+	UserDB        database.UserDbInterface
+	Jwt           *jwtauth.JWTAuth
+	JwtExperiesIn int
 }
 
-func NewUserHandler(db database.UserDbInterface) *UserHandler {
+func NewUserHandler(db database.UserDbInterface, jwt *jwtauth.JWTAuth, jwtExperiesIn int) *UserHandler {
 	return &UserHandler{
-		UserDB: db,
+		UserDB:        db,
+		Jwt:           jwt,
+		JwtExperiesIn: jwtExperiesIn,
 	}
 }
 
@@ -43,4 +49,40 @@ func (h *UserHandler) CreateUser(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(http.StatusCreated)
 
+}
+
+func (h *UserHandler) GetJwtToken(res http.ResponseWriter, req *http.Request) {
+
+	var credentialsDTO dto.CredentialsInputDTO
+	err := json.NewDecoder(req.Body).Decode(&credentialsDTO)
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.UserDB.FindByEmail(credentialsDTO.Email)
+	if err != nil {
+		res.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if !user.IsValidPassword(credentialsDTO.Password) {
+		res.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	_, tokenString, _ := h.Jwt.Encode(map[string]interface{}{
+		"sub": user.ID.String(),
+		"exp": time.Now().Add(time.Second * time.Duration(h.JwtExperiesIn)).Unix(),
+	})
+
+	accessToken := struct {
+		AcessToken string `json:"access_token"`
+	}{
+		AcessToken: tokenString,
+	}
+
+	res.WriteHeader(http.StatusOK)
+	res.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(res).Encode(accessToken)
 }

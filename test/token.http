@@ -1,0 +1,7 @@
+POST http://localhost:3333/users/token HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "user@mail.com",
+    "password": "102010"
+}
