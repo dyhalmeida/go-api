@@ -30,10 +30,12 @@ func main() {
 	productHandler := handlers.NewProductHandler(productDB)
 
 	userDB := database.NewUserDb(db)
-	userHandler := handlers.NewUserHandler(userDB, config.GetTokenAuth(), config.GetJwtExpiresIn())
+	userHandler := handlers.NewUserHandler(userDB)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.WithValue("jwt", config.GetTokenAuth()))
+	r.Use(middleware.WithValue("jwtExpiresIn", config.GetJwtExpiresIn()))
 
 	// r.Use(LogRequest)
 
