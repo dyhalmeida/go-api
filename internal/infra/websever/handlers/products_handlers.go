@@ -7,6 +7,7 @@ import (
 	"github.com/dyhalmeida/go-apis/internal/dto"
 	"github.com/dyhalmeida/go-apis/internal/entity"
 	"github.com/dyhalmeida/go-apis/internal/infra/database"
+	entityPkg "github.com/dyhalmeida/go-apis/pkg/entity"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -58,4 +59,44 @@ func (h *ProductHandler) GetProduct(res http.ResponseWriter, req *http.Request) 
 	res.WriteHeader(http.StatusOK)
 	json.NewEncoder(res).Encode(product)
 
+}
+
+func (h *ProductHandler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
+	id := chi.URLParam(req, "id")
+
+	if id == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var product entity.Product
+	err := json.NewDecoder(req.Body).Decode(&product)
+
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	product.ID, err = entityPkg.ParseID(id)
+
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err = h.ProductDB.FindByID(product.ID.String())
+
+	if err != nil {
+		res.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	err = h.ProductDB.Update(&product)
+
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	res.WriteHeader(http.StatusOK)
 }
