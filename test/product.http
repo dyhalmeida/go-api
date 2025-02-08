@@ -5,3 +5,6 @@ Content-Type: application/json
     "name": "Product 3",
     "price": 420
 }
+
+###
+GET http://localhost:3333/products/734560fa-2b99-47b3-9f84-bb777c4c758e
