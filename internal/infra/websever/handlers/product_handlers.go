@@ -157,6 +157,19 @@ func (h *ProductHandler) DeleteProduct(res http.ResponseWriter, req *http.Reques
 
 }
 
+// List Products godoc
+// @Summary List Products
+// @Description List Products
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param page query string false "page"
+// @Param limit query string false "limit"
+// @Param sort query string false "sort"
+// @Success 200 {array} entity.Product
+// @Failure 500 {object} Error
+// @Router /products [get]
+// @Security ApiKeyAuth
 func (h *ProductHandler) GetProducts(res http.ResponseWriter, req *http.Request) {
 	page, err := strconv.Atoi(req.URL.Query().Get("page"))
 	if err != nil {
@@ -173,6 +186,10 @@ func (h *ProductHandler) GetProducts(res http.ResponseWriter, req *http.Request)
 	products, err := h.ProductDB.FindAll(page, limit, sort)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
+		errorMessage := Error{
+			Message: err.Error(),
+		}
+		json.NewEncoder(res).Encode(errorMessage)
 		return
 	}
 
