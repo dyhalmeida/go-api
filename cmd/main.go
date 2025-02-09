@@ -6,16 +6,32 @@ import (
 	"net/http"
 
 	"github.com/dyhalmeida/go-apis/configs"
+	_ "github.com/dyhalmeida/go-apis/docs"
 	"github.com/dyhalmeida/go-apis/internal/entity"
 	"github.com/dyhalmeida/go-apis/internal/infra/database"
 	"github.com/dyhalmeida/go-apis/internal/infra/websever/handlers"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+// @title Go Expert API Example
+// @version 1.0
+// @description Product API with Authentication
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Diego Almeida
+// @contact.url https://www.linkedin.com/in/dyhalmeida
+// @contact.email dyhalmeida@gmail.com
+
+// @host localhost:3333
+// @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	config := configs.NewConfig()
 
@@ -51,6 +67,9 @@ func main() {
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/token", userHandler.GetJwtToken)
+
+	swaggerURL := fmt.Sprintf("http://localhost:%s/docs/doc.json", config.GetServerPort())
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL(swaggerURL)))
 
 	http.ListenAndServe(fmt.Sprintf(":%s", config.GetServerPort()), r)
 }
