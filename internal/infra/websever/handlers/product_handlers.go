@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -107,6 +108,20 @@ func (h *ProductHandler) GetProduct(res http.ResponseWriter, req *http.Request) 
 
 }
 
+// Update Product godoc
+// @Summary Update Product
+// @Description Update Product
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "id" Format(uuid)
+// @Param request body dto.ProductInputDTO true "product"
+// @Success 200
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Failure 500 {object} Error
+// @Router /products/{id} [put]
+// @Security ApiKeyAuth
 func (h *ProductHandler) UpdateProduct(res http.ResponseWriter, req *http.Request) {
 	id := chi.URLParam(req, "id")
 

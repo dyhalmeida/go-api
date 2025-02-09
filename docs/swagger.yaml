@@ -156,6 +156,45 @@ paths:
       summary: Get Product
       tags:
       - products
+    put:
+      consumes:
+      - application/json
+      description: Update Product
+      parameters:
+      - description: id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: product
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductInputDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Product
+      tags:
+      - products
   /users:
     post:
       consumes:
