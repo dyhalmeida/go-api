@@ -15,3 +15,7 @@ type CredentialsInputDTO struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type CredentialsOutputDTO struct {
+	AccessToken string `json:"access_token"`
+}

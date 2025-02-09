@@ -1,5 +1,17 @@
 basePath: /
 definitions:
+  dto.CredentialsInputDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.CredentialsOutputDTO:
+    properties:
+      access_token:
+        type: string
+    type: object
   dto.UserInputDTO:
     properties:
       email:
@@ -52,6 +64,36 @@ paths:
           schema:
             $ref: '#/definitions/handlers.Error'
       summary: Create User
+      tags:
+      - users
+  /users/token:
+    post:
+      consumes:
+      - application/json
+      description: Get a access token
+      parameters:
+      - description: user credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CredentialsInputDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CredentialsOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Get a access token
       tags:
       - users
 securityDefinitions:

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -72,6 +73,17 @@ func (h *UserHandler) CreateUser(res http.ResponseWriter, req *http.Request) {
 
 }
 
+// GetJWTToken godoc
+// @Summary Get a access token
+// @Description Get a access token
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body dto.CredentialsInputDTO true "user credentials"
+// @Success 200 {object} dto.CredentialsOutputDTO
+// @Failure 400 {object} Error
+// @Failure 500 {object} Error
+// @Router /users/token [post]
 func (h *UserHandler) GetJwtToken(res http.ResponseWriter, req *http.Request) {
 
 	jwt := req.Context().Value("jwt").(*jwtauth.JWTAuth)
@@ -86,12 +98,20 @@ func (h *UserHandler) GetJwtToken(res http.ResponseWriter, req *http.Request) {
 
 	user, err := h.UserDB.FindByEmail(credentialsDTO.Email)
 	if err != nil {
-		res.WriteHeader(http.StatusUnauthorized)
+		res.WriteHeader(http.StatusNotFound)
+		errorMessage := Error{
+			Message: err.Error(),
+		}
+		json.NewEncoder(res).Encode(errorMessage)
 		return
 	}
 
 	if !user.IsValidPassword(credentialsDTO.Password) {
 		res.WriteHeader(http.StatusUnauthorized)
+		errorMessage := Error{
+			Message: errors.New("Unauthorized").Error(),
+		}
+		json.NewEncoder(res).Encode(errorMessage)
 		return
 	}
 
@@ -100,10 +120,8 @@ func (h *UserHandler) GetJwtToken(res http.ResponseWriter, req *http.Request) {
 		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),
 	})
 
-	accessToken := struct {
-		AcessToken string `json:"access_token"`
-	}{
-		AcessToken: tokenString,
+	accessToken := dto.CredentialsOutputDTO{
+		AccessToken: tokenString,
 	}
 
 	res.WriteHeader(http.StatusOK)
