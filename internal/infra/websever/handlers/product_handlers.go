@@ -67,17 +67,37 @@ func (h *ProductHandler) CreateProduct(res http.ResponseWriter, req *http.Reques
 	res.WriteHeader(http.StatusCreated)
 }
 
+// Get Product godoc
+// @Summary Get Product
+// @Description Get Product
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "id" Format(uuid)
+// @Success 200 {object} entity.Product
+// @Failure 400 {object} Error
+// @Failure 404 {object} Error
+// @Router /products/{id} [get]
+// @Security ApiKeyAuth
 func (h *ProductHandler) GetProduct(res http.ResponseWriter, req *http.Request) {
 
 	id := chi.URLParam(req, "id")
 	if id == "" {
 		res.WriteHeader(http.StatusBadRequest)
+		errorMessage := Error{
+			Message: errors.New("bad request").Error(),
+		}
+		json.NewEncoder(res).Encode(errorMessage)
 		return
 	}
 
 	product, err := h.ProductDB.FindByID(id)
 	if err != nil {
 		res.WriteHeader(http.StatusNotFound)
+		errorMessage := Error{
+			Message: err.Error(),
+		}
+		json.NewEncoder(res).Encode(errorMessage)
 		return
 	}
 
