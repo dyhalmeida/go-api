@@ -73,7 +73,7 @@ Este projeto é uma API (CRUD de Produtos) desenvolvida em **Go** utilizando **C
 
 4. Configure o arquivo `.env` com as variáveis de ambiente necessárias:
    ```bash
-  cp cmd/.env.example cmd/.env
+   cp cmd/.env.example cmd/.env
    ```
    ```env
    DB_HOST=localhost
